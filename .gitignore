@@ -1,0 +1,18 @@
+## Carpetas de compilación
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+.vs/
+
+## Archivos de usuario de Visual Studio
+*.user
+*.suo
+
+## Publicación
+[Pp]ublish/
+*.publishsettings
+
+## Configuración con secretos - NO subir
+appsettings.json
+appsettings.Development.json
