@@ -10,7 +10,7 @@ namespace AppProductos.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = NombresRol.AdminOperador)]
 public class ProveedoresController : ControllerBase
 {
     private readonly AppDbContext _context;

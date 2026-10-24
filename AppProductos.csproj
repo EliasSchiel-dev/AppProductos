@@ -5,6 +5,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+    <!-- Identifica los "secretos de usuario" de este proyecto (dotnet user-secrets).
+         Los valores NO se guardan en el proyecto: viven en tu perfil de Windows. -->
+    <UserSecretsId>7b0b1d6e-3f1c-4a52-9c3e-5a2f0d8e4c11</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +22,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <!-- Procesamiento de imágenes (valida, corrige orientación, reduce y re-codifica a WebP) -->
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.*" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
   </ItemGroup>
 

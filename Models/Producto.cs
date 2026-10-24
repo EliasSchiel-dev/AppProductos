@@ -13,6 +13,4 @@ public class Producto
     public DateTime FechaCreacion { get; set; } = DateTime.Now;
 
     public Categoria? Categoria { get; set; }
-    public ICollection<IngresoProducto> Ingresos { get; set; } = new List<IngresoProducto>();
-    public ICollection<SalidaProducto> Salidas { get; set; } = new List<SalidaProducto>();
 }

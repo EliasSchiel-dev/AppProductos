@@ -10,7 +10,7 @@ namespace AppProductos.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize]   // consultar: cualquier usuario logueado (el catálogo de la app usa las categorías)
 public class CategoriasController : ControllerBase
 {
     private readonly AppDbContext _context;
@@ -19,6 +19,9 @@ public class CategoriasController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<PagedResult<CategoriaDto>>> GetAll(int page = 1, int pageSize = 10)
     {
+        page = Math.Max(page, 1);
+        pageSize = Math.Clamp(pageSize, 1, 100);
+
         var query = _context.Categorias.AsNoTracking().OrderBy(c => c.Nombre);
         var total = await query.CountAsync();
 
@@ -39,9 +42,14 @@ public class CategoriasController : ControllerBase
         return Ok(new CategoriaDto { IdCategoria = c.IdCategoria, Nombre = c.Nombre, Descripcion = c.Descripcion });
     }
 
+    // Modificar el catálogo: solo el personal (un Cliente no puede crear ni editar categorías)
     [HttpPost]
+    [Authorize(Roles = NombresRol.AdminOperador)]
     public async Task<ActionResult<CategoriaDto>> Create(CategoriaCreateDto dto)
     {
+        if (await _context.Categorias.AnyAsync(c => c.Nombre == dto.Nombre))
+            return Conflict("Ya existe una categoría con ese nombre.");
+
         var categoria = new Categoria { Nombre = dto.Nombre, Descripcion = dto.Descripcion };
         _context.Categorias.Add(categoria);
         await _context.SaveChangesAsync();
@@ -50,10 +58,14 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = NombresRol.AdminOperador)]
     public async Task<IActionResult> Update(int id, CategoriaCreateDto dto)
     {
         var categoria = await _context.Categorias.FindAsync(id);
         if (categoria is null) return NotFound();
+
+        if (await _context.Categorias.AnyAsync(c => c.Nombre == dto.Nombre && c.IdCategoria != id))
+            return Conflict("Ya existe una categoría con ese nombre.");
 
         categoria.Nombre = dto.Nombre;
         categoria.Descripcion = dto.Descripcion;
@@ -62,14 +74,21 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = NombresRol.Admin)]
     public async Task<IActionResult> Delete(int id)
     {
         var categoria = await _context.Categorias.FindAsync(id);
         if (categoria is null) return NotFound();
 
-        _context.Categorias.Remove(categoria);
-        await _context.SaveChangesAsync();
-        return NoContent();
+        try
+        {
+            _context.Categorias.Remove(categoria);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+        catch (DbUpdateException)
+        {
+            return Conflict("No se puede eliminar: la categoría tiene productos asociados.");
+        }
     }
 }

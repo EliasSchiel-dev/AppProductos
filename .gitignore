@@ -1,4 +1,4 @@
-## Carpetas de compilación
+## Carpetas de compilacion
 [Bb]in/
 [Oo]bj/
 [Dd]ebug/
@@ -9,10 +9,15 @@
 *.user
 *.suo
 
-## Publicación
+## Publicacion
 [Pp]ublish/
 *.publishsettings
 
-## Configuración con secretos - NO subir
-appsettings.json
-appsettings.Development.json
+## SECRETOS: nunca subir al repositorio
+## (los valores reales van en "dotnet user-secrets" en desarrollo
+##  y en este archivo, copiado a mano al servidor, en produccion)
+appsettings.Production.json
+secrets.json
+
+## Imagenes subidas por los usuarios: viven en el servidor, no en Git
+wwwroot/uploads/
